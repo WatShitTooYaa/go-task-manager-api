@@ -1,11 +1,18 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
-	"regexp"
+
+	// "log"
+	"net/http"
+	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httprate"
+	"github.com/rs/zerolog/log"
 )
+
+type JsonType map[string]any
 
 type ArgsError struct {
 	Message string
@@ -16,71 +23,55 @@ func (ie *ArgsError) Error() string {
 	return ie.Message
 }
 
-type Command struct {
-	Name   string
-	Regex  *regexp.Regexp
-	Handle func([]string) error
-}
-
 func main() {
-	fileName := "storage.json"
-	storage := NewStorage(fileName)
+	config := LoadConfig()
 
-	scanner := bufio.NewScanner(os.Stdin)
+	// fileName := "storage.json"
+	storage := NewStorage(config.StorageFile)
 
-	var commands []Command = []Command{
-		{
-			Name:   "add",
-			Regex:  regexp.MustCompile(`^add\s+"([^"]+)"$`),
-			Handle: storage.handleAdd(),
-		},
-		{
-			Name:   "list",
-			Regex:  regexp.MustCompile(`^list$`),
-			Handle: storage.handleList(),
-		},
-		{
-			Name:   "update",
-			Regex:  regexp.MustCompile(`^update\s+(\d+)\s+-(task|priority|status|p|t|s)\s+"([^"]+)"$`),
-			Handle: storage.handleUpdate(),
-		},
-		{
-			Name:   "delete",
-			Regex:  regexp.MustCompile(`^delete\s+(\d+)$`),
-			Handle: storage.handleDelete(),
-		},
+	handler := NewHandler(storage)
+	r := chi.NewRouter()
+	// r.Use(middleware.Logger)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.RequestID)
+
+	r.Use(CORSMiddleware)
+	r.Use(LoggingMiddleware)
+
+	//rate limit
+	r.Use(httprate.LimitByIP(50, time.Minute*1))
+
+	// r.Use(middleware.SetHeader("Content-Type", "application/json"))
+
+	// r.Get("/tasks", handler.HandleTasks)
+	r.Route("/api/v1/tasks", func(r chi.Router) {
+		r.Get("/", handler.listTask)
+		r.Post("/", handler.createTask)
+
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", handler.getSingleTask)
+			r.Put("/", handler.updateTask)
+			r.Delete("/", handler.deleteTask)
+		})
+	})
+
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("ok"))
+	})
+
+	r.NotFound(r.NotFoundHandler())
+
+	// log
+	address := ":" + config.Port
+	log.Info().
+		Str("address", address).
+		Str("environment", config.Environment).
+		Msg("Server started")
+
+	// log.Fatal(http.ListenAndServe(address, r))
+	if err := http.ListenAndServe(address, r); err != nil {
+		log.Fatal().Err(err).Msg("Server failed to start")
 	}
-
-mainLoop:
-	for {
-		fmt.Print("> ")
-		scanner.Scan()
-		input := scanner.Text()
-
-		if input == "break" {
-			break mainLoop
-		}
-
-		var rawScan []string
-		var found = false
-		for _, cmd := range commands {
-			rawScan = cmd.Regex.FindStringSubmatch(input)
-			if len(rawScan) > 0 {
-				err := cmd.Handle(rawScan)
-				if err != nil {
-					fmt.Println("error : ", err.Error())
-				}
-				name := cmd.Name
-				if name == "add" || name == "update" || name == "delete" {
-					fmt.Printf("perintah %s berhasil dijalankan\n", name)
-				}
-				found = true
-				break
-			}
-		}
-		if !found {
-			fmt.Println("command tidak ditemukan")
-		}
-	}
-
 }
