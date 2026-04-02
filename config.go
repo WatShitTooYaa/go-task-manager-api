@@ -17,17 +17,23 @@ type Config struct {
 func LoadConfig() *Config {
 	err := godotenv.Load()
 	log.Println("DEBUG start")
+
 	if err != nil {
-		log.Println("tidak error saat load env")
-		return nil
+		log.Println(".env tidak ditemukan, pakai environment Railway")
 	}
-	log.Fatal("file is nil")
-	return &Config{
+
+	config := &Config{
 		Port:        getEnv("PORT", "8080"),
 		StorageFile: getEnv("STORAGE_FILE", "storage.json"),
 		Environment: getEnv("ENV", "development"),
 		LogLevel:    getEnv("LOG_LEVEL", "info"),
 	}
+
+	if config.Port == "" {
+		log.Fatal("PORT tidak boleh kosong")
+	}
+
+	return config
 }
 
 func getEnv(key, defaultValue string) string {

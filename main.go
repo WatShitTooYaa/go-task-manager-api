@@ -42,9 +42,6 @@ func main() {
 	//rate limit
 	r.Use(httprate.LimitByIP(50, time.Minute*1))
 
-	// r.Use(middleware.SetHeader("Content-Type", "application/json"))
-
-	// r.Get("/tasks", handler.HandleTasks)
 	r.Route("/api/v1/tasks", func(r chi.Router) {
 		r.Get("/", handler.listTask)
 		r.Post("/", handler.createTask)
