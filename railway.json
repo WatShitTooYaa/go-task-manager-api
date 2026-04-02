@@ -1,0 +1,9 @@
+{
+  "$schema": "https://schema.railpack.com",
+   "build": {
+    "buildCommand": "go build -o app"
+  },
+  "deploy": {
+    "startCommand": "./app"
+  }
+}
