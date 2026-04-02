@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -15,10 +16,12 @@ type Config struct {
 
 func LoadConfig() *Config {
 	err := godotenv.Load()
+	log.Println("DEBUG start")
 	if err != nil {
+		log.Println("tidak error saat load env")
 		return nil
 	}
-
+	log.Fatal("file is nil")
 	return &Config{
 		Port:        getEnv("PORT", "8080"),
 		StorageFile: getEnv("STORAGE_FILE", "storage.json"),
