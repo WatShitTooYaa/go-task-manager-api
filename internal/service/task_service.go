@@ -21,13 +21,12 @@ func NewService(repo repository.TaskRepository) *TaskService {
 	return &TaskService{repo: repo}
 }
 
-func (service *TaskService) GetTasks() ([]entity.Task, error) {
-	ctx := context.Background()
+func (service *TaskService) GetTasks(ctx context.Context) ([]entity.Task, error) {
+	// ctx := context.Background()
 	return service.repo.FindAll(ctx)
 }
 
-func (service *TaskService) GetSingleTask(id uint16) (entity.Task, error) {
-	ctx := context.Background()
+func (service *TaskService) GetSingleTask(ctx context.Context, id uint16) (entity.Task, error) {
 	return service.repo.FindById(ctx, id)
 	// if err != nil {
 	// 	return task, err
@@ -35,8 +34,8 @@ func (service *TaskService) GetSingleTask(id uint16) (entity.Task, error) {
 	// return task, err
 }
 
-func (service *TaskService) AddTask(task entity.Task) (entity.Task, error) {
-	ctx := context.Background()
+func (service *TaskService) AddTask(ctx context.Context, task entity.Task) (entity.Task, error) {
+	// ctx := context.Background()
 
 	return service.repo.Insert(ctx, task)
 	// if err != nil {
@@ -45,8 +44,8 @@ func (service *TaskService) AddTask(task entity.Task) (entity.Task, error) {
 	// return nil
 }
 
-func (service *TaskService) UpdateTask(id uint16, task entity.Task) (entity.Task, error) {
-	task, err := service.repo.Update(context.Background(), task, id)
+func (service *TaskService) UpdateTask(ctx context.Context, id uint16, task entity.Task) (entity.Task, error) {
+	task, err := service.repo.Update(ctx, task, id)
 	if err != nil {
 		return task, err
 	}
@@ -54,6 +53,6 @@ func (service *TaskService) UpdateTask(id uint16, task entity.Task) (entity.Task
 	return task, nil
 }
 
-func (service *TaskService) DeleteTask(id uint16) error {
-	return service.repo.Delete(context.Background(), id)
+func (service *TaskService) DeleteTask(ctx context.Context, id uint16) error {
+	return service.repo.Delete(ctx, id)
 }

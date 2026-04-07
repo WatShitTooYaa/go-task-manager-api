@@ -26,8 +26,9 @@ func NewDBHandler(service *service.TaskService) *DBHandler {
 }
 
 func (handler *DBHandler) ListTask(w http.ResponseWriter, r *http.Request) {
-	reqID := middleware.GetReqID(r.Context())
-	tasks, err := handler.service.GetTasks()
+	ctx := r.Context()
+	reqID := middleware.GetReqID(ctx)
+	tasks, err := handler.service.GetTasks(ctx)
 	if err != nil {
 		msg := "Failed to load tasks"
 
@@ -50,8 +51,8 @@ func (handler *DBHandler) ListTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handler *DBHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
-	// handler.service.AddTask()
-	reqID := middleware.GetReqID(r.Context())
+	ctx := r.Context()
+	reqID := middleware.GetReqID(ctx)
 	var input entity.CreateTaskRequest
 	// input := CreateTaskRequest{}
 	err := json.NewDecoder(r.Body).Decode(&input)
@@ -82,7 +83,7 @@ func (handler *DBHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		Priority:  input.Priority,
 	}
 
-	task, err := handler.service.AddTask(inputTask)
+	task, err := handler.service.AddTask(ctx, inputTask)
 	if err != nil {
 		msg := "Failed to create task"
 		log.Error().
@@ -106,7 +107,8 @@ func (handler *DBHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handler *DBHandler) GetSingleTask(w http.ResponseWriter, r *http.Request) {
-	reqID := middleware.GetReqID(r.Context())
+	ctx := r.Context()
+	reqID := middleware.GetReqID(ctx)
 	idStr := chi.URLParam(r, "id")
 	if idStr == "" {
 
@@ -128,7 +130,7 @@ func (handler *DBHandler) GetSingleTask(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	task, err := handler.service.GetSingleTask(uint16(intId))
+	task, err := handler.service.GetSingleTask(ctx, uint16(intId))
 	if err != nil {
 		msg := "Task not found"
 		// fmt.Println(msg)
@@ -154,7 +156,8 @@ func (handler *DBHandler) GetSingleTask(w http.ResponseWriter, r *http.Request) 
 }
 
 func (handler *DBHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
-	reqID := middleware.GetReqID(r.Context())
+	ctx := r.Context()
+	reqID := middleware.GetReqID(ctx)
 	id := chi.URLParam(r, "id")
 	if id == "" {
 		// sendResponse(w, "Path must not null", false, nil, http.StatusBadRequest)
@@ -210,7 +213,7 @@ func (handler *DBHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 		Priority:  input.Priority,
 	}
 
-	task, err := handler.service.UpdateTask(uint16(intId), newTask)
+	task, err := handler.service.UpdateTask(ctx, uint16(intId), newTask)
 	if err != nil {
 		log.Warn().
 			Str("request_id", reqID).
@@ -222,7 +225,7 @@ func (handler *DBHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task, err = handler.service.GetSingleTask(uint16(intId))
+	task, err = handler.service.GetSingleTask(ctx, uint16(intId))
 	if err != nil {
 		msg := "Task not found"
 
@@ -247,7 +250,8 @@ func (handler *DBHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handler *DBHandler) DeleteTask(w http.ResponseWriter, r *http.Request) {
-	reqID := middleware.GetReqID(r.Context())
+	ctx := r.Context()
+	reqID := middleware.GetReqID(ctx)
 	idStr := chi.URLParam(r, "id")
 
 	if idStr == "" {
@@ -274,7 +278,7 @@ func (handler *DBHandler) DeleteTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = handler.service.DeleteTask(uint16(intId))
+	err = handler.service.DeleteTask(ctx, uint16(intId))
 	if err != nil {
 		log.Warn().
 			Str("request_id", reqID).
