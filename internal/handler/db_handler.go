@@ -1,26 +1,33 @@
-package main
+package handler
 
 import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
+	"github.com/WatShitTooYaa/go-task-manager-api/internal/entity"
+	resp "github.com/WatShitTooYaa/go-task-manager-api/internal/response"
+	"github.com/WatShitTooYaa/go-task-manager-api/internal/service"
+	"github.com/WatShitTooYaa/go-task-manager-api/internal/validation"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog/log"
+	// "github.com/WatShitTooYaa/go-task-manager-api/."
 )
 
-type TaskHandler struct {
-	storage *Storage
+// func
+type DBHandler struct {
+	service *service.TaskService
 }
 
-func NewHandler(storage *Storage) *TaskHandler {
-	return &TaskHandler{storage: storage}
+func NewDBHandler(service *service.TaskService) *DBHandler {
+	return &DBHandler{service: service}
 }
 
-func (handler *TaskHandler) listTask(w http.ResponseWriter, r *http.Request) {
+func (handler *DBHandler) ListTask(w http.ResponseWriter, r *http.Request) {
 	reqID := middleware.GetReqID(r.Context())
-	tasks, err := handler.storage.Load()
+	tasks, err := handler.service.GetTasks()
 	if err != nil {
 		msg := "Failed to load tasks"
 
@@ -29,9 +36,7 @@ func (handler *TaskHandler) listTask(w http.ResponseWriter, r *http.Request) {
 			Err(err).
 			Msg(msg)
 
-		// sendResponse(w, msg, false, nil, http.StatusInternalServerError)
-		// sendErrorResponse(w, )
-		InternalError(w, err.Error())
+		resp.InternalError(w, err.Error())
 		return
 	}
 	// respondSuccess(w, tasks, http.StatusOK)
@@ -40,13 +45,14 @@ func (handler *TaskHandler) listTask(w http.ResponseWriter, r *http.Request) {
 		Str("request_id", reqID).
 		Int("count", len(tasks)).
 		Msg(msg)
-	// sendResponse(w, "Success", true, tasks, http.StatusOK)
-	sendSuccessResponse(w, msg, tasks, http.StatusOK)
+
+	resp.SendSuccessResponse(w, "Success get all data", tasks, http.StatusOK)
 }
 
-func (handler *TaskHandler) createTask(w http.ResponseWriter, r *http.Request) {
+func (handler *DBHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
+	// handler.service.AddTask()
 	reqID := middleware.GetReqID(r.Context())
-	var input CreateTaskRequest
+	var input entity.CreateTaskRequest
 	// input := CreateTaskRequest{}
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -55,21 +61,28 @@ func (handler *TaskHandler) createTask(w http.ResponseWriter, r *http.Request) {
 			Err(err).
 			Msg("Invalid JSON in create task request")
 			// sendResponse(w, err.Error(), false, nil, http.StatusInternalServerError)
-		InvalidJSON(w)
+		resp.InvalidJSON(w)
 		return
 	}
 
-	if err := ValidateStruct(input); err != nil {
+	if err := validation.ValidateStruct(input); err != nil {
 		log.Warn().
 			Str("request_id", reqID).
 			Str("validation_error", err.Error()).
 			Msg("Validation failed")
 		// sendResponse(w, err.Error(), false, nil, http.StatusBadRequest)
-		ValidationError(w, err.Error(), nil)
+		resp.ValidationError(w, err.Error(), nil)
 		return
 	}
 
-	task, err := handler.storage.AddTask(input.Content, input.Priority)
+	inputTask := entity.Task{
+		Content:   input.Content,
+		Completed: false,
+		Timestamp: time.Now().Format(time.RFC3339),
+		Priority:  input.Priority,
+	}
+
+	task, err := handler.service.AddTask(inputTask)
 	if err != nil {
 		msg := "Failed to create task"
 		log.Error().
@@ -78,29 +91,28 @@ func (handler *TaskHandler) createTask(w http.ResponseWriter, r *http.Request) {
 			Msg(msg)
 
 			// sendResponse(w, "Invalid JSON", false, nil, http.StatusInternalServerError)
-		InternalError(w, msg)
+		resp.InternalError(w, msg)
 		return
 	}
 
 	log.Info().
 		Str("request_id", reqID).
-		Uint16("task_id", task.Id).
-		Str("content", task.Content).
+		Uint16("task_id", inputTask.Id).
+		Str("content", inputTask.Content).
 		Msg("Task created successfully")
 
 		// sendResponse(w, "Task created", true, task, http.StatusCreated) // 201
-	sendSuccessResponse(w, "Task created", task, http.StatusCreated)
+	resp.SendSuccessResponse(w, "Task created", task, http.StatusCreated)
 }
 
-// path
-func (handler *TaskHandler) getSingleTask(w http.ResponseWriter, r *http.Request) {
+func (handler *DBHandler) GetSingleTask(w http.ResponseWriter, r *http.Request) {
 	reqID := middleware.GetReqID(r.Context())
 	idStr := chi.URLParam(r, "id")
 	if idStr == "" {
 
 		// respondError(w, "Path must not null", http.StatusBadRequest)
 		// sendResponse(w, "Path must not null", false, nil, http.StatusBadRequest)
-		BadRequest(w, "Path must not null")
+		resp.BadRequest(w, "Path must not null")
 		return
 	}
 
@@ -112,11 +124,11 @@ func (handler *TaskHandler) getSingleTask(w http.ResponseWriter, r *http.Request
 			Msg("Invalid ID format")
 
 		// sendResponse(w, "Path must be int", false, nil, http.StatusBadRequest)
-		InvalidID(w)
+		resp.InvalidID(w)
 		return
 	}
 
-	task, err := handler.storage.GetByID(uint16(intId))
+	task, err := handler.service.GetSingleTask(uint16(intId))
 	if err != nil {
 		msg := "Task not found"
 		// fmt.Println(msg)
@@ -126,7 +138,7 @@ func (handler *TaskHandler) getSingleTask(w http.ResponseWriter, r *http.Request
 			Int("task_id", intId).
 			Msg(msg)
 
-		TaskNotFound(w, intId)
+		resp.TaskNotFound(w, intId)
 		// sendResponse(w, msg, false, nil, http.StatusNotFound)
 
 		return
@@ -138,15 +150,15 @@ func (handler *TaskHandler) getSingleTask(w http.ResponseWriter, r *http.Request
 		Msg("Task retrieved successfully")
 
 	// sendResponse(w, "Success", true, task, http.StatusOK)
-	sendSuccessResponse(w, "", task, http.StatusOK)
+	resp.SendSuccessResponse(w, "", task, http.StatusOK)
 }
 
-func (handler *TaskHandler) updateTask(w http.ResponseWriter, r *http.Request) {
+func (handler *DBHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	reqID := middleware.GetReqID(r.Context())
 	id := chi.URLParam(r, "id")
 	if id == "" {
 		// sendResponse(w, "Path must not null", false, nil, http.StatusBadRequest)
-		BadRequest(w, "Path must not null")
+		resp.BadRequest(w, "Path must not null")
 
 		return
 	}
@@ -161,11 +173,11 @@ func (handler *TaskHandler) updateTask(w http.ResponseWriter, r *http.Request) {
 
 		// sendResponse(w, "Invalid ID format", false, nil, http.StatusBadRequest)
 		// BadRequest(w, "Path must not null")
-		InvalidID(w)
+		resp.InvalidID(w)
 
 		return
 	}
-	var input UpdateTaskRequest
+	var input entity.UpdateTaskRequest
 
 	err = json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
@@ -174,11 +186,11 @@ func (handler *TaskHandler) updateTask(w http.ResponseWriter, r *http.Request) {
 			Err(err).
 			Msg("Invalid JSON in update task request")
 		// sendResponse(w, "Invalid JSON", false, nil, http.StatusBadRequest)
-		InvalidJSON(w)
+		resp.InvalidJSON(w)
 		return
 	}
 
-	err = ValidateStruct(input)
+	err = validation.ValidateStruct(input)
 	if err != nil {
 		msg := "Validation failed"
 		log.Warn().
@@ -187,11 +199,18 @@ func (handler *TaskHandler) updateTask(w http.ResponseWriter, r *http.Request) {
 			Msg(msg)
 
 		// sendResponse(w, err.Error(), false, nil, http.StatusBadRequest)
-		ValidationError(w, err.Error(), nil)
+		resp.ValidationError(w, err.Error(), nil)
 		return
 	}
 
-	err = handler.storage.UpdateTask(uint16(intId), input.Content, input.Priority, input.Completed)
+	newTask := entity.Task{
+		Content:   input.Content,
+		Completed: input.Completed,
+		Timestamp: time.Now().Format(time.RFC3339),
+		Priority:  input.Priority,
+	}
+
+	task, err := handler.service.UpdateTask(uint16(intId), newTask)
 	if err != nil {
 		log.Warn().
 			Str("request_id", reqID).
@@ -199,11 +218,11 @@ func (handler *TaskHandler) updateTask(w http.ResponseWriter, r *http.Request) {
 			Msg("Task not found for update")
 
 		// sendResponse(w, "Task not found", false, nil, http.StatusNotFound)
-		TaskNotFound(w, intId)
+		resp.TaskNotFound(w, intId)
 		return
 	}
 
-	updatedTask, err := handler.storage.GetByID(uint16(intId))
+	task, err = handler.service.GetSingleTask(uint16(intId))
 	if err != nil {
 		msg := "Task not found"
 
@@ -213,7 +232,7 @@ func (handler *TaskHandler) updateTask(w http.ResponseWriter, r *http.Request) {
 			Msg(msg)
 
 		// sendResponse(w, msg, false, nil, http.StatusNotFound)
-		TaskNotFound(w, intId)
+		resp.TaskNotFound(w, intId)
 
 		return
 	}
@@ -224,10 +243,10 @@ func (handler *TaskHandler) updateTask(w http.ResponseWriter, r *http.Request) {
 		Msg("Task updated successfully")
 
 	// sendResponse(w, "Success", true, updatedTask, http.StatusOK)
-	sendSuccessResponse(w, "", updatedTask, http.StatusOK)
+	resp.SendSuccessResponse(w, "", task, http.StatusOK)
 }
 
-func (handler *TaskHandler) deleteTask(w http.ResponseWriter, r *http.Request) {
+func (handler *DBHandler) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	reqID := middleware.GetReqID(r.Context())
 	idStr := chi.URLParam(r, "id")
 
@@ -238,7 +257,7 @@ func (handler *TaskHandler) deleteTask(w http.ResponseWriter, r *http.Request) {
 			Str("id", idStr).
 			Msg(msg)
 		// sendResponse(w, "Path must not null", false, nil, http.StatusBadRequest)
-		InternalError(w, msg)
+		resp.InternalError(w, msg)
 		return
 	}
 
@@ -251,11 +270,11 @@ func (handler *TaskHandler) deleteTask(w http.ResponseWriter, r *http.Request) {
 			Msg(msg)
 
 		// sendResponse(w, msg, false, nil, http.StatusBadRequest)
-		InvalidID(w)
+		resp.InvalidID(w)
 		return
 	}
 
-	err = handler.storage.DeleteTask(uint16(intId))
+	err = handler.service.DeleteTask(uint16(intId))
 	if err != nil {
 		log.Warn().
 			Str("request_id", reqID).
@@ -263,7 +282,7 @@ func (handler *TaskHandler) deleteTask(w http.ResponseWriter, r *http.Request) {
 			Msg("Task not found for deletion")
 
 		// sendResponse(w, "Task not found", false, nil, http.StatusNotFound)
-		TaskNotFound(w, intId)
+		resp.TaskNotFound(w, intId)
 
 		return
 	}

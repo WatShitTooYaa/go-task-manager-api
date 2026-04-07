@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+
+	"github.com/WatShitTooYaa/go-task-manager-api/internal/storage"
 )
 
 type Command struct {
@@ -15,7 +17,7 @@ type Command struct {
 
 func main_cli() {
 	fileName := "storage.json"
-	storage := NewStorage(fileName)
+	storage := storage.NewStorage(fileName)
 
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -23,22 +25,22 @@ func main_cli() {
 		{
 			Name:   "add",
 			Regex:  regexp.MustCompile(`^add\s+"([^"]+)"$`),
-			Handle: storage.handleAdd(),
+			Handle: storage.HandleAdd(),
 		},
 		{
 			Name:   "list",
 			Regex:  regexp.MustCompile(`^list$`),
-			Handle: storage.handleList(),
+			Handle: storage.HandleList(),
 		},
 		{
 			Name:   "update",
 			Regex:  regexp.MustCompile(`^update\s+(\d+)\s+-(task|priority|status|p|t|s)\s+"([^"]+)"$`),
-			Handle: storage.handleUpdate(),
+			Handle: storage.HandleUpdate(),
 		},
 		{
 			Name:   "delete",
 			Regex:  regexp.MustCompile(`^delete\s+(\d+)$`),
-			Handle: storage.handleDelete(),
+			Handle: storage.HandleDelete(),
 		},
 		{
 			Name:   "import",

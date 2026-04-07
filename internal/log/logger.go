@@ -4,11 +4,12 @@ import (
 	"os"
 	"time"
 
+	conf "github.com/WatShitTooYaa/go-task-manager-api/internal/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
-func InitLogger(config *Config) {
+func InitLogger(config *conf.Config) {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	if config.IsDevelopment() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)

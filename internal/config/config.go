@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"log"
@@ -19,7 +19,7 @@ func LoadConfig() *Config {
 	log.Println("DEBUG start")
 
 	if err != nil {
-		log.Println(".env tidak ditemukan, pakai environment Railway")
+		log.Println(".env tidak ditemukan, pakai environment sistem")
 	}
 
 	config := &Config{

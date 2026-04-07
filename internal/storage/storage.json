@@ -2,749 +2,749 @@
 	{
 		"id": 1,
 		"content": "was",
-		"isCompleted": true,
+		"Completed": true,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 2,
 		"content": "Testing concurrent code",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 3,
 		"content": "Build REST API",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 4,
 		"content": "Deploy to production",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 5,
 		"content": "Write documentation",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 6,
 		"content": "Code review",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 7,
 		"content": "Fix bugs",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 8,
 		"content": "Refactor storage",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 9,
 		"content": "Optimize performance",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 10,
 		"content": "Belajar goroutines",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 11,
 		"content": "Testing concurrent code",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 12,
 		"content": "Build REST API",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 13,
 		"content": "Deploy to production",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 14,
 		"content": "Write documentation",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 15,
 		"content": "Code review",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 16,
 		"content": "Fix bugs",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 17,
 		"content": "Refactor storage",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 18,
 		"content": "Add logging",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 19,
 		"content": "Optimize performance",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 20,
 		"content": "Add logging",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 21,
 		"content": "Testing concurrent code",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 22,
 		"content": "Build REST API",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 23,
 		"content": "Belajar goroutines",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 24,
 		"content": "Deploy to production",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 25,
 		"content": "Code review",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 26,
 		"content": "Fix bugs",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 27,
 		"content": "Write documentation",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 28,
 		"content": "Refactor storage",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 29,
 		"content": "Optimize performance",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 30,
 		"content": "Belajar goroutines",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 31,
 		"content": "Testing concurrent code",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 32,
 		"content": "Add logging",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 33,
 		"content": "Build REST API",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 34,
 		"content": "Deploy to production",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 35,
 		"content": "Write documentation",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 36,
 		"content": "Code review",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 37,
 		"content": "Fix bugs",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 38,
 		"content": "Refactor storage",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 39,
 		"content": "Add logging",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 40,
 		"content": "Optimize performance",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 41,
 		"content": "Belajar goroutines",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 42,
 		"content": "Testing concurrent code",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 43,
 		"content": "Build REST API",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 44,
 		"content": "Deploy to production",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 45,
 		"content": "Write documentation",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 46,
 		"content": "Code review",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 47,
 		"content": "Fix bugs",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 48,
 		"content": "Refactor storage",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 49,
 		"content": "Optimize performance",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 50,
 		"content": "Belajar goroutines",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 51,
 		"content": "Testing concurrent code",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 52,
 		"content": "Build REST API",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 53,
 		"content": "Deploy to production",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 54,
 		"content": "Write documentation",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 55,
 		"content": "Code review",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 56,
 		"content": "Fix bugs",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 57,
 		"content": "Add logging",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 58,
 		"content": "Add logging",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 59,
 		"content": "Optimize performance",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 60,
 		"content": "Belajar goroutines",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 61,
 		"content": "Testing concurrent code",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 62,
 		"content": "Build REST API",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 63,
 		"content": "Deploy to production",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 64,
 		"content": "Write documentation",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 65,
 		"content": "Code review",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 66,
 		"content": "Refactor storage",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 67,
 		"content": "Fix bugs",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 68,
 		"content": "Refactor storage",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 69,
 		"content": "Add logging",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 70,
 		"content": "Optimize performance",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 71,
 		"content": "Belajar goroutines",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 72,
 		"content": "Testing concurrent code",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 73,
 		"content": "Build REST API",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 74,
 		"content": "Deploy to production",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 75,
 		"content": "Write documentation",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 76,
 		"content": "Code review",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 77,
 		"content": "Fix bugs",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 78,
 		"content": "Refactor storage",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 79,
 		"content": "Add logging",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 80,
 		"content": "Optimize performance",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 81,
 		"content": "Belajar goroutines",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 82,
 		"content": "Testing concurrent code",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 83,
 		"content": "Build REST API",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 84,
 		"content": "Deploy to production",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 85,
 		"content": "Write documentation",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 86,
 		"content": "Code review",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 87,
 		"content": "Fix bugs",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 88,
 		"content": "Refactor storage",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 89,
 		"content": "Add logging",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 90,
 		"content": "Optimize performance",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 91,
 		"content": "Belajar goroutines",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 92,
 		"content": "Testing concurrent code",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 93,
 		"content": "Build REST API",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 94,
 		"content": "Deploy to production",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 95,
 		"content": "Write documentation",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 96,
 		"content": "Code review",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 97,
 		"content": "Fix bugs",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 98,
 		"content": "Refactor storage",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "medium"
 	},
 	{
 		"id": 99,
 		"content": "Add logging",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 100,
 		"content": "Optimize performance",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-18T22:29:39+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 101,
 		"content": "gedang",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-24T10:52:25+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 102,
 		"content": "gedang",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-31T09:26:04+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 103,
 		"content": "makanan",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-31T09:26:10+07:00",
 		"priority": "low"
 	},
 	{
 		"id": 104,
 		"content": "lontong",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-31T09:26:29+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 105,
 		"content": "was",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-31T09:27:35+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 106,
 		"content": "was",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-31T21:05:40+07:00",
 		"priority": "high"
 	},
 	{
 		"id": 107,
 		"content": "nipon",
-		"isCompleted": false,
+		"Completed": false,
 		"timestamp": "2026-03-31T21:05:52+07:00",
 		"priority": "high"
 	}

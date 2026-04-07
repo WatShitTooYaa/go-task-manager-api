@@ -1,13 +1,16 @@
-package main
+package storage
 
 import (
 	"errors"
 	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/WatShitTooYaa/go-task-manager-api/internal/entity"
+	// "github.com/WatShitTooYaa/go-task-manager-api/intenal/entity"
 )
 
-func (storage *Storage) handleList() func([]string) error {
+func (storage *Storage) HandleList() func([]string) error {
 	return func(cmds []string) error {
 		tasks, err := storage.Load()
 		if err != nil {
@@ -21,12 +24,12 @@ func (storage *Storage) handleList() func([]string) error {
 
 		for _, task := range tasks {
 			completed := ""
-			if task.IsCompleted {
+			if task.Completed {
 				completed = "X"
 			} else {
 				completed = " "
 			}
-			result := fmt.Sprintf("%d. [%s] %s (%s) \t %s", task.Id, completed, task.Content, task.Priority, task.Time)
+			result := fmt.Sprintf("%d. [%s] %s (%s) \t %s", task.Id, completed, task.Content, task.Priority, task.Timestamp)
 			fmt.Println(result)
 		}
 
@@ -34,7 +37,7 @@ func (storage *Storage) handleList() func([]string) error {
 	}
 }
 
-func (storage *Storage) handleAdd() func([]string) error {
+func (storage *Storage) HandleAdd() func([]string) error {
 	return func(cmds []string) error {
 		tasks, err := storage.Load()
 		if err != nil {
@@ -46,11 +49,11 @@ func (storage *Storage) handleAdd() func([]string) error {
 			lastId = tasks[len(tasks)-1].Id
 		}
 
-		task := Task{
-			Id:          lastId + 1,
-			Content:     cmds[1],
-			IsCompleted: false,
-			Time:        time.Now().Format(time.RFC3339),
+		task := entity.Task{
+			Id:        lastId + 1,
+			Content:   cmds[1],
+			Completed: false,
+			Timestamp: time.Now().Format(time.RFC3339),
 			// Time:        time.Now().Format("02-01-2006 15:04:05"),
 			Priority: "low",
 		}
@@ -61,7 +64,7 @@ func (storage *Storage) handleAdd() func([]string) error {
 	}
 }
 
-func (storage *Storage) handleUpdate() func([]string) error {
+func (storage *Storage) HandleUpdate() func([]string) error {
 	return func(cmds []string) error {
 		tasks, err := storage.Load()
 		if err != nil {
@@ -94,7 +97,7 @@ func (storage *Storage) handleUpdate() func([]string) error {
 					if err != nil {
 						return err
 					}
-					tasks[i].IsCompleted = isCompleted
+					tasks[i].Completed = isCompleted
 					// break loopTask
 				default:
 					return errors.New("flag tidak ditemukan")
@@ -110,7 +113,7 @@ func (storage *Storage) handleUpdate() func([]string) error {
 	}
 }
 
-func (storage *Storage) handleDelete() func([]string) error {
+func (storage *Storage) HandleDelete() func([]string) error {
 	return func(cmds []string) error {
 		rawId := cmds[1]
 		id, err := strconv.Atoi(rawId)
@@ -123,7 +126,7 @@ func (storage *Storage) handleDelete() func([]string) error {
 			return err
 		}
 
-		var tempTask []Task
+		var tempTask []entity.Task
 		var found = false
 		for _, task := range tasks {
 			if task.Id == uint16(id) {

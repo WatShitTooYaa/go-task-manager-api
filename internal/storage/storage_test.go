@@ -1,4 +1,4 @@
-package main
+package storage
 
 import (
 	"os"
@@ -18,7 +18,7 @@ func TestAddTask(t *testing.T) {
 
 	for i, task := range tasks {
 		// var expected error =nil
-		handler := storage.handleAdd()
+		handler := storage.HandleAdd()
 
 		result := handler(task)
 
@@ -43,7 +43,7 @@ func TestUpdateTask(t *testing.T) {
 
 	for i, task := range initTask {
 		// var expected error =nil
-		handler := storage.handleAdd()
+		handler := storage.HandleAdd()
 
 		result := handler(task)
 
@@ -62,7 +62,7 @@ func TestUpdateTask(t *testing.T) {
 
 	for i, task := range tasks {
 		// var expected error =nil
-		handler := storage.handleUpdate()
+		handler := storage.HandleUpdate()
 
 		result := handler(task)
 
@@ -85,7 +85,7 @@ func TestDelete(t *testing.T) {
 
 	for i, task := range initTask {
 		// var expected error =nil
-		handler := storage.handleAdd()
+		handler := storage.HandleAdd()
 
 		result := handler(task)
 
@@ -102,7 +102,7 @@ func TestDelete(t *testing.T) {
 
 	for i, task := range deleteTasks {
 		// var expected error =nil
-		handler := storage.handleDelete()
+		handler := storage.HandleDelete()
 
 		result := handler(task)
 

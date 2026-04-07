@@ -1,8 +1,10 @@
-package main
+package response
 
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/WatShitTooYaa/go-task-manager-api/internal/utils"
 )
 
 type ErrorCode string
@@ -19,9 +21,9 @@ const (
 )
 
 type ErrorDetail struct {
-	Code    ErrorCode `json:"code"`
-	Message string    `json:"message"`
-	Details JsonType  `json:"details,omitempty"`
+	Code    ErrorCode      `json:"code"`
+	Message string         `json:"message"`
+	Details utils.JsonType `json:"details,omitempty"`
 }
 
 type ErrorResponse struct {
@@ -51,7 +53,7 @@ func sendErrorResponse(w http.ResponseWriter, code ErrorCode, message string, st
 }
 
 // sendSuccessResponse sends structured success response
-func sendSuccessResponse(w http.ResponseWriter, message string, data any, statusCode int) {
+func SendSuccessResponse(w http.ResponseWriter, message string, data any, statusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
