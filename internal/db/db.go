@@ -31,7 +31,28 @@ func NewDatabase(ctx context.Context, urlDb string) (*pgxpool.Pool, error) {
 		pool.Close()
 		return nil, err
 	}
+
+	if err := initDB(ctx, pool); err != nil {
+		pool.Close()
+		return nil, err
+	}
+
 	return pool, nil
+}
+
+func initDB(ctx context.Context, db *pgxpool.Pool) error {
+	query := `
+	CREATE TABLE IF NOT EXISTS tasks (
+		id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+		content VARCHAR(100) NOT NULL,
+		completed BOOLEAN DEFAULT FALSE,
+		timestamp VARCHAR(100),
+		priority VARCHAR(20) NOT NULL
+	);
+	`
+
+	_, err := db.Exec(ctx, query)
+	return err
 }
 
 // func (db *PostgresDB) BeginTx(ctx context.Context) pgx.Tx {

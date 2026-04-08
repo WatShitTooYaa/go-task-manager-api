@@ -8,10 +8,11 @@ import (
 )
 
 type Config struct {
-	Port        string
-	StorageFile string
-	Environment string
-	LogLevel    string
+	Port         string
+	StorageFile  string
+	Environment  string
+	LogLevel     string
+	DATABASE_URL string
 }
 
 func LoadConfig() *Config {
@@ -23,10 +24,11 @@ func LoadConfig() *Config {
 	}
 
 	config := &Config{
-		Port:        getEnv("PORT", "8080"),
-		StorageFile: getEnv("STORAGE_FILE", "storage.json"),
-		Environment: getEnv("ENV", "development"),
-		LogLevel:    getEnv("LOG_LEVEL", "info"),
+		Port:         getEnv("PORT", "8080"),
+		StorageFile:  getEnv("STORAGE_FILE", "storage.json"),
+		Environment:  getEnv("ENV", "development"),
+		LogLevel:     getEnv("LOG_LEVEL", "info"),
+		DATABASE_URL: getEnv("DATABASE_URL", "postgres://postgres:admin@localhost:5433/task_api"),
 	}
 
 	if config.Port == "" {

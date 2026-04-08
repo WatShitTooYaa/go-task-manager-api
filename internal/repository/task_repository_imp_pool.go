@@ -9,6 +9,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+var (
+	ErrTaskNotFound = errors.New("task not found")
+	ErrInvalidTask  = errors.New("invalid task")
+)
+
 type taskRepositoryImplPool struct {
 	DBPool *pgxpool.Pool
 }
@@ -19,7 +24,7 @@ func NewRepositoryTaskPool(dbPool *pgxpool.Pool) TaskRepository {
 
 func (pool *taskRepositoryImplPool) Insert(ctx context.Context, task entity.Task) (entity.Task, error) {
 	query := `
-	INSERT INTO task (content, completed, timestamp, priority)
+	INSERT INTO tasks (content, completed, timestamp, priority)
 	VALUES ($1, $2, $3, $4)
 	RETURNING id
 	`
@@ -40,7 +45,7 @@ func (pool *taskRepositoryImplPool) Insert(ctx context.Context, task entity.Task
 }
 
 func (pool *taskRepositoryImplPool) FindAll(ctx context.Context) ([]entity.Task, error) {
-	query := "SELECT id, content, completed, timestamp, priority FROM task"
+	query := "SELECT id, content, completed, timestamp, priority FROM tasks"
 	rows, err := pool.DBPool.Query(ctx, query)
 
 	if err != nil {
@@ -64,7 +69,7 @@ func (pool *taskRepositoryImplPool) FindAll(ctx context.Context) ([]entity.Task,
 }
 
 func (pool *taskRepositoryImplPool) FindById(ctx context.Context, id uint16) (entity.Task, error) {
-	query := "select id, content, completed, timestamp, priority from task where id = $1"
+	query := "select id, content, completed, timestamp, priority from tasks where id = $1"
 	rows, err := pool.DBPool.Query(ctx, query, id)
 	task := entity.Task{}
 	if err != nil {
@@ -85,7 +90,7 @@ func (pool *taskRepositoryImplPool) FindById(ctx context.Context, id uint16) (en
 
 func (pool *taskRepositoryImplPool) Update(ctx context.Context, newTask entity.Task, id uint16) (entity.Task, error) {
 	query := `
-	update task
+	update tasks
 	set content = $1,
 		completed = $2,
 		timestamp = $3,
@@ -113,26 +118,21 @@ func (pool *taskRepositoryImplPool) Update(ctx context.Context, newTask entity.T
 
 func (pool *taskRepositoryImplPool) Delete(ctx context.Context, id uint16) error {
 	query := `
-	DELETE FROM task
-	where id = $1
+	DELETE FROM tasks
+	WHERE id = $1
 	`
-	_, err := pool.DBPool.Exec(ctx, query, id)
-	// task := entity.Task{}
+	cmdTag, err := pool.DBPool.Exec(ctx, query, id)
 	if err != nil {
+		// fmt.Println("exec error")
 		return err
 	}
-	//ada
-	// defer rows.Close()
+
+	if cmdTag.RowsAffected() == 0 {
+		// fmt.Println("task not fon")
+		return ErrTaskNotFound
+	}
+
 	return nil
-	// if rows.Next() {
-	// 	err := rows.Scan(&task.Id, &task.Content, &task.Completed, &task.Timestamp, &task.Priority)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	return task, nil
-	// } else {
-	// 	return task, errors.New("Id " + strconv.Itoa(int(id)) + " not found!")
-	// }
 }
 
 // func ()

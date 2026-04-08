@@ -35,20 +35,21 @@ func (ie *ArgsError) Error() string {
 }
 
 func main() {
-	urlDb := "postgres://postgres:admin@localhost:5433/task_api"
+	// urlDb := "postgres://postgres:admin@localhost:5433/task_api"
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
 	// config := LoadConfig()
 	config := config.LoadConfig()
 
-	db, err := db.NewDatabase(ctx, urlDb)
-	if err != nil {
-		panic(err.Error())
-	}
 	// fileName := "storage.json"
 	storage := storage.NewStorage(config.StorageFile)
 	handler := hd.NewHandler(storage)
+
 	// pgxpool.
+	db, err := db.NewDatabase(ctx, config.DATABASE_URL)
+	if err != nil {
+		panic(err.Error())
+	}
 	repo := repo.NewRepositoryTaskPool(db)
 	service := service.NewService(repo)
 	handlerDb := hd.NewDBHandler(service)
@@ -89,7 +90,7 @@ func main() {
 		r.Route("/{id}", func(r chi.Router) {
 			r.Get("/", handlerDb.GetSingleTask)
 			r.Put("/", handlerDb.UpdateTask)
-			r.Delete("/", handler.DeleteTask)
+			r.Delete("/", handlerDb.DeleteTask)
 		})
 	})
 
