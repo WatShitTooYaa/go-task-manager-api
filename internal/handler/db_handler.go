@@ -91,7 +91,6 @@ func (handler *DBHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 			Err(err).
 			Msg(msg)
 
-			// sendResponse(w, "Invalid JSON", false, nil, http.StatusInternalServerError)
 		resp.InternalError(w, msg)
 		return
 	}
@@ -102,7 +101,6 @@ func (handler *DBHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		Str("content", inputTask.Content).
 		Msg("Task created successfully")
 
-		// sendResponse(w, "Task created", true, task, http.StatusCreated) // 201
 	resp.SendSuccessResponse(w, "Task created", task, http.StatusCreated)
 }
 

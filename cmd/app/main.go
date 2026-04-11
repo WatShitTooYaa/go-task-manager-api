@@ -50,25 +50,38 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	repo := repo.NewRepositoryTaskPool(db)
-	service := service.NewService(repo)
-	handlerDb := hd.NewDBHandler(service)
+	repoTask := repo.NewRepositoryTaskPool(db)
+	serviceTask := service.NewService(repoTask)
+	handlerDb := hd.NewDBHandler(serviceTask)
 	// service := service.NewService()
+
+	repoUser := repo.NewUserRepository(db)
+	serviceUser := service.NewUserService(repoUser)
+	handlerUser := hd.NewUserHandler(serviceUser)
 
 	//with db
 	// dbHandler :=
 
 	r := chi.NewRouter()
 	// r.Use(middleware.Logger)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.RequestID)
+	middlewares := chi.Middlewares{
+		middleware.RealIP,
+		middleware.Recoverer,
+		middleware.RequestID,
 
-	r.Use(mw.CORSMiddleware)
-	r.Use(mw.LoggingMiddleware)
+		mw.CORSMiddleware,
+		mw.LoggingMiddleware,
+		httprate.LimitByIP(50, time.Minute*1),
+	}
+
+	r.Use(middlewares...)
 
 	//rate limit
-	r.Use(httprate.LimitByIP(50, time.Minute*1))
+	// r.Use(httprate.LimitByIP(50, time.Minute*1))
+
+	//auth
+	r.Post("/api/v1/auth/register", handlerUser.RegisterHandler)
+	r.Post("/api/v1/auth/login", handlerUser.LoginHandler)
 
 	//with storage.json
 	r.Route("/api/v1/tasks", func(r chi.Router) {

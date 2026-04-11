@@ -84,7 +84,7 @@ func (pool *taskRepositoryImplPool) FindById(ctx context.Context, id uint16) (en
 		}
 		return task, nil
 	} else {
-		return task, errors.New("Id " + strconv.Itoa(int(id)) + " not found!")
+		return task, ErrTaskNotFound
 	}
 }
 
