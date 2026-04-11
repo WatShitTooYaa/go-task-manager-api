@@ -52,6 +52,15 @@ func initDB(ctx context.Context, db *pgxpool.Pool) error {
 	`
 
 	_, err := db.Exec(ctx, query)
+
+	query = `
+	CREATE TABLE IF NOT EXISTS users (
+		id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+		username VARCHAR(50) NOT NULL,
+		password VARCHAR(200) NOT NULL
+	);
+		`
+	_, err = db.Exec(ctx, query)
 	return err
 }
 
