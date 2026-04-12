@@ -67,7 +67,7 @@ func (u *UserRepositoryImp) Insert(ctx context.Context, user entity.UserParam) (
 
 // Login implements [UserRepository].
 func (u *UserRepositoryImp) Login(ctx context.Context, user entity.UserParam) (entity.User, error) {
-	userRes := entity.User{}
+	userFromDB := entity.User{}
 
 	query := `
 		SELECT id, username, password FROM users 
@@ -76,27 +76,27 @@ func (u *UserRepositoryImp) Login(ctx context.Context, user entity.UserParam) (e
 
 	row, err := u.DB.Query(ctx, query, user.Username)
 	if err != nil {
-		return userRes, err
+		return userFromDB, err
 	}
 	defer row.Close()
 
 	if row.Next() {
-		err = row.Scan(&userRes.Id, &userRes.Username, &userRes.Password)
+		err = row.Scan(&userFromDB.Id, &userFromDB.Username, &userFromDB.Password)
 		if err != nil {
-			return userRes, err
+			return userFromDB, err
 		}
 	} else {
-		return userRes, ErrUserNotFound
+		return userFromDB, ErrUserNotFound
 	}
 
-	if !auth.CheckPasswordHash(userRes.Password, user.Password) {
-		return userRes, errors.New("Invalid password")
+	if !auth.CheckPasswordHash(user.Password, userFromDB.Password) {
+		return userFromDB, errors.New("Invalid password")
 	}
 
 	// log.Println("pass true")
-	userRes.Password = ""
+	userFromDB.Password = ""
 
-	return userRes, nil
+	return userFromDB, nil
 }
 
 // GetAll implements [UserRepository].

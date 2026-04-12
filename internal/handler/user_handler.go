@@ -68,6 +68,11 @@ func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	token, err := auth.GenerateToken(user.Id, user.Password)
 	if err != nil {
+		msg := fmt.Sprintf("Failed to generate token, err : %s", err.Error())
+		log.Error().
+			Str("request_id", reqID).
+			Err(err).
+			Msg(msg)
 		resp.InternalError(w, "Failed to generate token")
 		return
 	}
@@ -79,7 +84,7 @@ func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Msg("login success")
 
 	resp.SendSuccessResponse(w, "Login successfully", map[string]any{
-		token: token,
+		"token": token,
 	}, http.StatusOK)
 }
 
