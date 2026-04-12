@@ -1,10 +1,14 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/WatShitTooYaa/go-task-manager-api/internal/auth"
+	"github.com/WatShitTooYaa/go-task-manager-api/internal/response"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog/log"
 )
@@ -21,6 +25,33 @@ func CORSMiddleware(next http.Handler) http.Handler {
 		}
 
 		next.ServeHTTP(w, r)
+	})
+}
+
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			response.Unauthorized(w, "Missing authorization header")
+			return
+		}
+
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+		if tokenString == authHeader {
+			response.Unauthorized(w, "Invalid authorization format")
+			return
+		}
+
+		claims, err := auth.ValidateToken(tokenString)
+		if err != nil {
+			response.Unauthorized(w, "Invalid token")
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), "user_id", claims.ID)
+		ctx = context.WithValue(ctx, "username", claims.Username)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

@@ -52,6 +52,9 @@ func initDB(ctx context.Context, db *pgxpool.Pool) error {
 	`
 
 	_, err := db.Exec(ctx, query)
+	if err != nil {
+		return err
+	}
 
 	query = `
 	CREATE TABLE IF NOT EXISTS users (

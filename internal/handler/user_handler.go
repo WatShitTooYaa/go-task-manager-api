@@ -2,8 +2,10 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
+	"github.com/WatShitTooYaa/go-task-manager-api/internal/auth"
 	"github.com/WatShitTooYaa/go-task-manager-api/internal/entity"
 	resp "github.com/WatShitTooYaa/go-task-manager-api/internal/response"
 	"github.com/WatShitTooYaa/go-task-manager-api/internal/service"
@@ -64,13 +66,21 @@ func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	token, err := auth.GenerateToken(user.Id, user.Password)
+	if err != nil {
+		resp.InternalError(w, "Failed to generate token")
+		return
+	}
+
 	log.Info().
 		Str("request_id", reqID).
 		Uint16("user_id", user.Id).
 		Str("username", user.Username).
 		Msg("login success")
 
-	resp.SendSuccessResponse(w, "Login successfully", user, http.StatusCreated)
+	resp.SendSuccessResponse(w, "Login successfully", map[string]any{
+		token: token,
+	}, http.StatusOK)
 }
 
 func (h *UserHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +117,7 @@ func (h *UserHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.s.RegisterService(ctx, input)
 	if err != nil {
-		msg := "Failed to login"
+		msg := fmt.Sprintf("Failed to register. error : %s", err.Error())
 		log.Error().
 			Str("request_id", reqID).
 			Err(err).

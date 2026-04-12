@@ -5,9 +5,9 @@ import (
 	"errors"
 	"log"
 
+	"github.com/WatShitTooYaa/go-task-manager-api/internal/auth"
 	"github.com/WatShitTooYaa/go-task-manager-api/internal/entity"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -23,21 +23,24 @@ func NewUserRepository(db *pgxpool.Pool) UserRepository {
 	return &UserRepositoryImp{DB: db}
 }
 
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 11)
-	return string(bytes), err
-}
+// func HashPassword(password string) (string, error) {
+// 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 11)
+// 	return string(bytes), err
+// }
 
 // Insert implements [UserRepository].
 func (u *UserRepositoryImp) Insert(ctx context.Context, user entity.UserParam) (entity.User, error) {
+	newUser := entity.User{}
+	err := u.checkUserAvailable(ctx, user.Username)
+	if err != nil {
+		return newUser, err
+	}
 	query := `
 	insert into users (username, password)
 	values ($1, $2)
 	RETURNING id
 	`
-
-	newUser := entity.User{}
-	hashPass, err := HashPassword(user.Password)
+	hashPass, err := auth.HashPassword(user.Password)
 	if err != nil {
 		return newUser, err
 	}
@@ -53,7 +56,7 @@ func (u *UserRepositoryImp) Insert(ctx context.Context, user entity.UserParam) (
 
 	newUser.Id = uint16(id)
 	newUser.Username = user.Username
-	newUser.Password = user.Password
+	newUser.Password = ""
 
 	log.Println("new user :", newUser)
 
@@ -64,15 +67,13 @@ func (u *UserRepositoryImp) Insert(ctx context.Context, user entity.UserParam) (
 
 // Login implements [UserRepository].
 func (u *UserRepositoryImp) Login(ctx context.Context, user entity.UserParam) (entity.User, error) {
+	userRes := entity.User{}
+
 	query := `
 		SELECT id, username, password FROM users 
 		WHERE username = $1
 	`
-	userRes := entity.User{}
-	// var currPass string
-	// hashPass :=
 
-	//chek is username available
 	row, err := u.DB.Query(ctx, query, user.Username)
 	if err != nil {
 		return userRes, err
@@ -88,9 +89,8 @@ func (u *UserRepositoryImp) Login(ctx context.Context, user entity.UserParam) (e
 		return userRes, ErrUserNotFound
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(userRes.Password), []byte(user.Password))
-	if err != nil {
-		return userRes, err
+	if !auth.CheckPasswordHash(userRes.Password, user.Password) {
+		return userRes, errors.New("Invalid password")
 	}
 
 	// log.Println("pass true")
@@ -107,7 +107,8 @@ func (u *UserRepositoryImp) GetAll(ctx context.Context) ([]entity.User, error) {
 // Get implements [UserRepository].
 func (u *UserRepositoryImp) Get(ctx context.Context, id uint16) (entity.User, error) {
 	query := `
-	SELECT id, username, password FROM users WHERE id = $1 AND pas
+		SELECT id, username, password FROM users WHERE
+		username = $1
 	`
 	user := entity.User{}
 	row, err := u.DB.Query(ctx, query, id)
@@ -167,5 +168,21 @@ func (u *UserRepositoryImp) Delete(ctx context.Context, id uint16) error {
 		return ErrUserNotFound
 	}
 
+	return nil
+}
+
+func (u *UserRepositoryImp) checkUserAvailable(ctx context.Context, username string) error {
+	query := `
+		SELECT id, username, password FROM users WHERE
+		username = $1
+	`
+
+	rows, err := u.DB.Query(ctx, query, username)
+	if err != nil {
+		return err
+	}
+	if rows.Next() {
+		return errors.New("Username has been taken")
+	}
 	return nil
 }

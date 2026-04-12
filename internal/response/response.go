@@ -18,6 +18,7 @@ const (
 	ErrCodeInvalidID    ErrorCode = "INVALID_ID"
 	ErrCodeTaskNotFound ErrorCode = "TASK_NOT_FOUND"
 	ErrCodeStorageError ErrorCode = "STORAGE_ERROR"
+	ErrCodeUnauthorized ErrorCode = "UNAUTHORIZED"
 )
 
 type ErrorDetail struct {
@@ -89,4 +90,8 @@ func TaskNotFound(w http.ResponseWriter, id int) {
 
 func InternalError(w http.ResponseWriter, message string) {
 	sendErrorResponse(w, ErrCodeInternal, message, http.StatusInternalServerError, nil)
+}
+
+func Unauthorized(w http.ResponseWriter, message string) {
+	sendErrorResponse(w, ErrCodeUnauthorized, message, http.StatusUnauthorized, nil)
 }
