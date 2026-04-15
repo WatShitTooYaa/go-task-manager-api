@@ -9,7 +9,8 @@ package entity
 // }
 
 type Task struct {
-	Id        uint16 `json:"id"`
+	Id        uint16 `json:"id" validate:"required"`
+	UserID    uint16 `json:"user_id" validate:"required"`
 	Content   string `json:"content" validate:"required,min=3,max=200"`
 	Completed bool   `json:"Completed"`
 	Timestamp string `json:"timestamp"`

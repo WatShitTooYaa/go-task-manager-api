@@ -70,7 +70,7 @@ func BadRequest(w http.ResponseWriter, message string) {
 	sendErrorResponse(w, ErrCodeBadRequest, message, http.StatusBadRequest, nil)
 }
 
-func ValidationError(w http.ResponseWriter, message string, details map[string]interface{}) {
+func ValidationError(w http.ResponseWriter, message string, details map[string]any) {
 	sendErrorResponse(w, ErrCodeValidation, message, http.StatusBadRequest, details)
 }
 

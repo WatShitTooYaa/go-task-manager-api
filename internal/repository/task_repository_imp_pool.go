@@ -24,12 +24,12 @@ func NewRepositoryTaskPool(dbPool *pgxpool.Pool) TaskRepository {
 
 func (pool *taskRepositoryImplPool) Insert(ctx context.Context, task entity.Task) (entity.Task, error) {
 	query := `
-	INSERT INTO tasks (content, completed, timestamp, priority)
-	VALUES ($1, $2, $3, $4)
+	INSERT INTO tasks (content, user_id, completed, timestamp, priority)
+	VALUES ($1, $2, $3, $4, $5)
 	RETURNING id
 	`
 	id := 0
-	row := pool.DBPool.QueryRow(ctx, query, task.Content, task.Completed, task.Timestamp, task.Priority)
+	row := pool.DBPool.QueryRow(ctx, query, task.Content, task.UserID, task.Completed, task.Timestamp, task.Priority)
 
 	err := row.Scan(&id)
 	if err != nil {
@@ -44,9 +44,13 @@ func (pool *taskRepositoryImplPool) Insert(ctx context.Context, task entity.Task
 	return task, nil
 }
 
-func (pool *taskRepositoryImplPool) FindAll(ctx context.Context) ([]entity.Task, error) {
-	query := "SELECT id, content, completed, timestamp, priority FROM tasks"
-	rows, err := pool.DBPool.Query(ctx, query)
+func (pool *taskRepositoryImplPool) FindAll(ctx context.Context, userID uint16) ([]entity.Task, error) {
+	query := `
+	SELECT id, user_id, content, completed, timestamp, priority 
+	FROM tasks
+	WHERE user_id = $1
+	`
+	rows, err := pool.DBPool.Query(ctx, query, userID)
 
 	if err != nil {
 		return nil, err
@@ -58,7 +62,7 @@ func (pool *taskRepositoryImplPool) FindAll(ctx context.Context) ([]entity.Task,
 
 	for rows.Next() {
 		task := entity.Task{}
-		err := rows.Scan(&task.Id, &task.Content, &task.Completed, &task.Timestamp, &task.Priority)
+		err := rows.Scan(&task.Id, &task.UserID, &task.Content, &task.Completed, &task.Timestamp, &task.Priority)
 		if err != nil {
 			return nil, err
 		}
@@ -68,9 +72,12 @@ func (pool *taskRepositoryImplPool) FindAll(ctx context.Context) ([]entity.Task,
 	return tasks, nil
 }
 
-func (pool *taskRepositoryImplPool) FindById(ctx context.Context, id uint16) (entity.Task, error) {
-	query := "select id, content, completed, timestamp, priority from tasks where id = $1"
-	rows, err := pool.DBPool.Query(ctx, query, id)
+func (pool *taskRepositoryImplPool) FindById(ctx context.Context, id, userID uint16) (entity.Task, error) {
+	query := `
+	select id, content, completed, timestamp, priority 
+	from tasks
+	where id = $1 and user_id = $2`
+	rows, err := pool.DBPool.Query(ctx, query, id, userID)
 	task := entity.Task{}
 	if err != nil {
 		return task, err
@@ -88,17 +95,19 @@ func (pool *taskRepositoryImplPool) FindById(ctx context.Context, id uint16) (en
 	}
 }
 
-func (pool *taskRepositoryImplPool) Update(ctx context.Context, newTask entity.Task, id uint16) (entity.Task, error) {
+func (pool *taskRepositoryImplPool) Update(ctx context.Context, newTask entity.Task, id, userID uint16) (entity.Task, error) {
 	query := `
 	update tasks
 	set content = $1,
 		completed = $2,
 		timestamp = $3,
 		priority = $4
-	where id = $5
-	returning *
+	where id = $5 and user_id = $6
+	returning id, user_id, content, completed, timestamp, priority
 	`
-	rows, err := pool.DBPool.Query(ctx, query, newTask.Content, newTask.Completed, newTask.Timestamp, newTask.Priority, id)
+	rows, err := pool.DBPool.Query(
+		ctx, query, newTask.Content, newTask.Completed, newTask.Timestamp, newTask.Priority, id, userID,
+	)
 	task := entity.Task{}
 	if err != nil {
 		return task, err
@@ -106,7 +115,7 @@ func (pool *taskRepositoryImplPool) Update(ctx context.Context, newTask entity.T
 	//ada
 	defer rows.Close()
 	if rows.Next() {
-		err := rows.Scan(&task.Id, &task.Content, &task.Completed, &task.Timestamp, &task.Priority)
+		err := rows.Scan(&task.Id, &task.UserID, &task.Content, &task.Completed, &task.Timestamp, &task.Priority)
 		if err != nil {
 			return task, err
 		}
@@ -116,12 +125,12 @@ func (pool *taskRepositoryImplPool) Update(ctx context.Context, newTask entity.T
 	}
 }
 
-func (pool *taskRepositoryImplPool) Delete(ctx context.Context, id uint16) error {
+func (pool *taskRepositoryImplPool) Delete(ctx context.Context, id, userID uint16) error {
 	query := `
 	DELETE FROM tasks
-	WHERE id = $1
+	WHERE id = $1 and user_id = $2
 	`
-	cmdTag, err := pool.DBPool.Exec(ctx, query, id)
+	cmdTag, err := pool.DBPool.Exec(ctx, query, id, userID)
 	if err != nil {
 		// fmt.Println("exec error")
 		return err

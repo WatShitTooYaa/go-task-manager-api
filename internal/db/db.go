@@ -44,6 +44,7 @@ func initDB(ctx context.Context, db *pgxpool.Pool) error {
 	query := `
 	CREATE TABLE IF NOT EXISTS tasks (
 		id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+		user_id int,
 		content VARCHAR(100) NOT NULL,
 		completed BOOLEAN DEFAULT FALSE,
 		timestamp VARCHAR(100),
@@ -57,13 +58,24 @@ func initDB(ctx context.Context, db *pgxpool.Pool) error {
 	}
 
 	query = `
-	CREATE TABLE IF NOT EXISTS users (
-		id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-		username VARCHAR(50) NOT NULL,
-		password VARCHAR(200) NOT NULL
-	);
-		`
+		CREATE TABLE IF NOT EXISTS users (
+			id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+			username VARCHAR(50) NOT NULL,
+			password VARCHAR(200) NOT NULL
+		);
+	`
+
 	_, err = db.Exec(ctx, query)
+	query = `
+		alter table tasks 
+		add constraint fk_tasks_user
+		foreign key (user_id)
+		references users(id) 
+		on delete cascade;
+
+		create index if not exists
+		idx_tasks_user_id on tasks(user_id);
+	`
 	return err
 }
 

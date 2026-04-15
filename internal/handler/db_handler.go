@@ -2,6 +2,8 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -28,7 +30,20 @@ func NewDBHandler(service *service.TaskService) *DBHandler {
 func (handler *DBHandler) ListTask(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	reqID := middleware.GetReqID(ctx)
-	tasks, err := handler.service.GetTasks(ctx)
+	// userID := getUserID(ctx, w)
+
+	userID := ctx.Value("user_id").(uint16)
+	fmt.Println("user id : ", userID)
+	if userID == 0 {
+		msg := "user id not found"
+		log.Warn().
+			Str("request_id", reqID).
+			Err(errors.New("user id nil")).
+			Msg(msg)
+		resp.Unauthorized(w, msg)
+		return
+	}
+	tasks, err := handler.service.GetTasks(ctx, userID)
 	if err != nil {
 		msg := "Failed to load tasks"
 
@@ -53,6 +68,18 @@ func (handler *DBHandler) ListTask(w http.ResponseWriter, r *http.Request) {
 func (handler *DBHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	reqID := middleware.GetReqID(ctx)
+
+	userID := ctx.Value("user_id").(uint16)
+	fmt.Println("user id : ", userID)
+	if userID == 0 {
+		msg := "user id not found"
+		log.Warn().
+			Str("request_id", reqID).
+			Err(errors.New("user id nil")).
+			Msg(msg)
+		resp.Unauthorized(w, msg)
+		return
+	}
 	var input entity.CreateTaskRequest
 	// input := CreateTaskRequest{}
 	err := json.NewDecoder(r.Body).Decode(&input)
@@ -78,6 +105,7 @@ func (handler *DBHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	inputTask := entity.Task{
 		Content:   input.Content,
+		UserID:    userID,
 		Completed: false,
 		Timestamp: time.Now().Format(time.RFC3339),
 		Priority:  input.Priority,
@@ -107,11 +135,22 @@ func (handler *DBHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 func (handler *DBHandler) GetSingleTask(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	reqID := middleware.GetReqID(ctx)
+
+	userId := ctx.Value("user_id").(uint16)
+	fmt.Println("user id : ", userId)
+	if userId == 0 {
+		msg := "user id not found"
+		log.Warn().
+			Str("request_id", reqID).
+			Err(errors.New("user id nil")).
+			Msg(msg)
+		resp.Unauthorized(w, msg)
+		return
+	}
+
 	idStr := chi.URLParam(r, "id")
 	if idStr == "" {
 
-		// respondError(w, "Path must not null", http.StatusBadRequest)
-		// sendResponse(w, "Path must not null", false, nil, http.StatusBadRequest)
 		resp.BadRequest(w, "Path must not null")
 		return
 	}
@@ -123,12 +162,11 @@ func (handler *DBHandler) GetSingleTask(w http.ResponseWriter, r *http.Request) 
 			Str("id", idStr).
 			Msg("Invalid ID format")
 
-		// sendResponse(w, "Path must be int", false, nil, http.StatusBadRequest)
 		resp.InvalidID(w)
 		return
 	}
 
-	task, err := handler.service.GetSingleTask(ctx, uint16(intId))
+	task, err := handler.service.GetSingleTask(ctx, uint16(intId), userId)
 	if err != nil {
 		msg := "Task not found"
 		// fmt.Println(msg)
@@ -156,6 +194,19 @@ func (handler *DBHandler) GetSingleTask(w http.ResponseWriter, r *http.Request) 
 func (handler *DBHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	reqID := middleware.GetReqID(ctx)
+
+	userId := ctx.Value("user_id").(uint16)
+	fmt.Println("user id : ", userId)
+	if userId == 0 {
+		msg := "user id not found"
+		log.Warn().
+			Str("request_id", reqID).
+			Err(errors.New("user id nil")).
+			Msg(msg)
+		resp.Unauthorized(w, msg)
+		return
+	}
+
 	id := chi.URLParam(r, "id")
 	if id == "" {
 		// sendResponse(w, "Path must not null", false, nil, http.StatusBadRequest)
@@ -172,8 +223,6 @@ func (handler *DBHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 			Str("id", id).
 			Msg("Invalid ID format")
 
-		// sendResponse(w, "Invalid ID format", false, nil, http.StatusBadRequest)
-		// BadRequest(w, "Path must not null")
 		resp.InvalidID(w)
 
 		return
@@ -205,25 +254,27 @@ func (handler *DBHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newTask := entity.Task{
-		Content:   input.Content,
+		Content: input.Content,
+		// UserID:    userId,
 		Completed: input.Completed,
 		Timestamp: time.Now().Format(time.RFC3339),
 		Priority:  input.Priority,
 	}
 
-	task, err := handler.service.UpdateTask(ctx, uint16(intId), newTask)
+	task, err := handler.service.UpdateTask(ctx, uint16(intId), userId, newTask)
 	if err != nil {
 		log.Warn().
 			Str("request_id", reqID).
 			Int("task_id", intId).
-			Msg("Task not found for update")
+			// Msg("Task not found for update")
+			Msg("Task not found for update. err : " + err.Error())
 
 		// sendResponse(w, "Task not found", false, nil, http.StatusNotFound)
 		resp.TaskNotFound(w, intId)
 		return
 	}
 
-	task, err = handler.service.GetSingleTask(ctx, uint16(intId))
+	task, err = handler.service.GetSingleTask(ctx, uint16(intId), userId)
 	if err != nil {
 		msg := "Task not found"
 
@@ -250,6 +301,22 @@ func (handler *DBHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 func (handler *DBHandler) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	reqID := middleware.GetReqID(ctx)
+
+	userId, ok := ctx.Value("user_id").(uint16)
+	if !ok {
+
+	}
+	fmt.Println("user id : ", userId)
+	if userId == 0 {
+		msg := "user id not found"
+		log.Warn().
+			Str("request_id", reqID).
+			Err(errors.New("user id nil")).
+			Msg(msg)
+		resp.Unauthorized(w, msg)
+		return
+	}
+
 	idStr := chi.URLParam(r, "id")
 
 	if idStr == "" {
@@ -276,7 +343,7 @@ func (handler *DBHandler) DeleteTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = handler.service.DeleteTask(ctx, uint16(intId))
+	err = handler.service.DeleteTask(ctx, uint16(intId), userId)
 	if err != nil {
 		log.Warn().
 			Str("request_id", reqID).
@@ -296,3 +363,84 @@ func (handler *DBHandler) DeleteTask(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (handler *DBHandler) CreateTaskWithID(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	reqID := middleware.GetReqID(ctx)
+	userId := ctx.Value("user_id").(uint16)
+	fmt.Println("user id : ", userId)
+	if userId == 0 {
+		msg := "user id not found"
+		log.Warn().
+			Str("request_id", reqID).
+			Err(errors.New("user id nil")).
+			Msg(msg)
+		resp.Unauthorized(w, msg)
+		return
+	}
+	var input entity.CreateTaskRequest
+	// input := CreateTaskRequest{}
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		log.Warn().
+			Str("request_id", reqID).
+			Err(err).
+			Msg("Invalid JSON in create task request")
+			// sendResponse(w, err.Error(), false, nil, http.StatusInternalServerError)
+		resp.InvalidJSON(w)
+		return
+	}
+
+	if err := validation.ValidateStruct(input); err != nil {
+		log.Warn().
+			Str("request_id", reqID).
+			Str("validation_error", err.Error()).
+			Msg("Validation failed")
+		// sendResponse(w, err.Error(), false, nil, http.StatusBadRequest)
+		resp.ValidationError(w, err.Error(), nil)
+		return
+	}
+
+	inputTask := entity.Task{
+		Content:   input.Content,
+		UserID:    userId,
+		Completed: false,
+		Timestamp: time.Now().Format(time.RFC3339),
+		Priority:  input.Priority,
+	}
+
+	task, err := handler.service.AddTask(ctx, inputTask)
+	if err != nil {
+		msg := "Failed to create task"
+		log.Error().
+			Str("request_id", reqID).
+			Err(err).
+			Msg(msg)
+
+		resp.InternalError(w, msg)
+		return
+	}
+
+	log.Info().
+		Str("request_id", reqID).
+		Uint16("task_id", inputTask.Id).
+		Str("content", inputTask.Content).
+		Msg("Task created successfully")
+
+	resp.SendSuccessResponse(w, "Task created", task, http.StatusCreated)
+}
+
+// func getUserID(ctx context.Context, w http.ResponseWriter) uint16 {
+// 	reqID := middleware.GetReqID(ctx)
+// 	userId := ctx.Value("user_id").(uint16)
+// 	fmt.Println("user id : ", userId)
+// 	if userId == 0 {
+// 		msg := "user id not found"
+// 		log.Warn().
+// 			Str("request_id", reqID).
+// 			Err(errors.New("user id nil")).
+// 			Msg(msg)
+// 		resp.Unauthorized(w, msg)
+// 		return 0
+// 	}
+// }

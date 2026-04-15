@@ -50,10 +50,6 @@ func (h *UserHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// inputTask := entity.UserParam{
-
-	// }
-
 	user, err := h.s.LoginService(ctx, input)
 	if err != nil {
 		msg := "Failed to login"

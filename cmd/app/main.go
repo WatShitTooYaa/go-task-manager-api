@@ -95,15 +95,23 @@ func main() {
 		})
 	})
 
-	//with postgres
-	r.Route("/api/v2/tasks", func(r chi.Router) {
-		r.Get("/", handlerDb.ListTask)
-		r.Post("/", handlerDb.CreateTask)
+	r.Group(func(r chi.Router) {
+		r.Use(mw.AuthMiddleware)
+		r.Get("/cek", func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte("berhasil auth"))
+		})
+		r.Post("/tasks", handlerDb.CreateTaskWithID)
 
-		r.Route("/{id}", func(r chi.Router) {
-			r.Get("/", handlerDb.GetSingleTask)
-			r.Put("/", handlerDb.UpdateTask)
-			r.Delete("/", handlerDb.DeleteTask)
+		//with postgres
+		r.Route("/api/v2/tasks", func(r chi.Router) {
+			r.Get("/", handlerDb.ListTask)
+			r.Post("/", handlerDb.CreateTask)
+
+			r.Route("/{id}", func(r chi.Router) {
+				r.Get("/", handlerDb.GetSingleTask)
+				r.Put("/", handlerDb.UpdateTask)
+				r.Delete("/", handlerDb.DeleteTask)
+			})
 		})
 	})
 

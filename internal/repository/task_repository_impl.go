@@ -13,7 +13,7 @@ type taskRepositoryImpl struct {
 	DB *sql.DB
 }
 
-func NewRepositoryTask(db *sql.DB) TaskRepository {
+func NewRepositoryTask(db *sql.DB) *taskRepositoryImpl {
 	return &taskRepositoryImpl{DB: db}
 }
 
