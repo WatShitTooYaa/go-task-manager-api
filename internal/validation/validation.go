@@ -13,7 +13,7 @@ func init() {
 	validate = validator.New()
 }
 
-// ValidateStruct validates a struct and returns user-friendly error
+// ValidateStruct validates a struct and returns error
 func ValidateStruct(s any) error {
 	err := validate.Struct(s)
 	if err == nil {

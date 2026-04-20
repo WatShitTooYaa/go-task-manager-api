@@ -1,9 +1,9 @@
 {
   "$schema": "https://schema.railpack.com",
    "build": {
-    "buildCommand": "go build -o app ./cmd/app"
+    "buildCommand": "go build -o app ./cmd/app && curl -L https://github.com/golang-migrate/migrate/releases/latest/download/migrate.linux-amd64.tar.gz | tar xvz"
   },
   "deploy": {
-    "startCommand": "./app"
+    "startCommand": "./migrate -path internal/db/migrations -database \"$DATABASE_URL\" up && ./app"
   }
 }

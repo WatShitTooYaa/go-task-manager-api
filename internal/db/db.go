@@ -58,7 +58,7 @@ func initDB(ctx context.Context, db *pgxpool.Pool) error {
 
 	query = `
 	alter table tasks 
-	add user_id int
+	add if not exists user_id int
 	`
 	_, err = db.Exec(ctx, query)
 	if err != nil {
