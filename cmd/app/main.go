@@ -76,14 +76,7 @@ func main() {
 
 	r.Use(middlewares...)
 
-	//rate limit
-	// r.Use(httprate.LimitByIP(50, time.Minute*1))
-
-	//auth
-	r.Post("/api/v1/auth/register", handlerUser.RegisterHandler)
-	r.Post("/api/v1/auth/login", handlerUser.LoginHandler)
-
-	//with storage.json
+	//storage.json
 	r.Route("/api/v1/tasks", func(r chi.Router) {
 		r.Get("/", handler.ListTask)
 		r.Post("/", handler.CreateTask)
@@ -95,14 +88,18 @@ func main() {
 		})
 	})
 
+	r.Route("/api/v1/auth", func(r chi.Router) {
+		r.Post("/register", handlerUser.RegisterHandler)
+		r.Post("/login", handlerUser.LoginHandler)
+		r.Get("/refresh", handlerUser.RefreshTokenHandler)
+	})
+
 	r.Group(func(r chi.Router) {
 		r.Use(mw.AuthMiddleware)
-		r.Get("/cek", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/check", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("berhasil auth"))
 		})
-		r.Post("/tasks", handlerDb.CreateTaskWithID)
 
-		//with postgres
 		r.Route("/api/v2/tasks", func(r chi.Router) {
 			r.Get("/", handlerDb.ListTask)
 			r.Post("/", handlerDb.CreateTask)
@@ -119,34 +116,6 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("ok"))
 	})
-
-	// r.Get("/export", func(w http.ResponseWriter, r *http.Request) {
-	// 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
-	// 	defer cancel()
-	// 	tasks, err := storage.Load()
-	// 	if err != nil {
-	// 		InternalError(w, "err : "+err.Error())
-	// 	}
-	// 	tx := db.BeginTx(ctx)
-	// 	// tx.Exec(ctx)
-	// 	query := `
-	// 		INSERT INTO task (content, completed, timestamp, priority)
-	// 		VALUES ($1, $2, $3, $4)
-	// 		RETURNING id
-	// 	`
-
-	// 	for i, task := range tasks {
-	// 		_, err := tx.Exec(ctx, query, task.Content, task.Completed, task.Timestamp, task.Priority)
-	// 		if err != nil {
-	// 			tx.Rollback(ctx)
-	// 			InternalError(w, "err at id"+strconv.Itoa(i)+": "+err.Error())
-	// 			return
-	// 		}
-	// 	}
-
-	// 	tx.Commit(ctx)
-	// 	sendSuccessResponse(w, "success export", tasks, http.StatusOK)
-	// })
 
 	r.NotFound(r.NotFoundHandler())
 

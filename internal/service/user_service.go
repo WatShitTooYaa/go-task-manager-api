@@ -23,6 +23,11 @@ func (s *UserService) RegisterService(ctx context.Context, user entity.UserParam
 	return s.repo.Insert(ctx, user)
 }
 
+func (s *UserService) RefreshService(ctx context.Context, userID uint16) (entity.User, error) {
+	return s.repo.GetByID(ctx, userID)
+}
+
+// func (s *UserService) RefreshTokenService
 // func ()  {
 
 // }

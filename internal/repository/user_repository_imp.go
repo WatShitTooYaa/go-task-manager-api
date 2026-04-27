@@ -105,7 +105,7 @@ func (u *UserRepositoryImp) GetAll(ctx context.Context) ([]entity.User, error) {
 }
 
 // Get implements [UserRepository].
-func (u *UserRepositoryImp) Get(ctx context.Context, id uint16) (entity.User, error) {
+func (u *UserRepositoryImp) GetByID(ctx context.Context, id uint16) (entity.User, error) {
 	query := `
 		SELECT id, username, password FROM users WHERE
 		username = $1

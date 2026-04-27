@@ -13,6 +13,7 @@ type Config struct {
 	Environment  string
 	LogLevel     string
 	DATABASE_URL string
+	JWT_SECRET   string
 }
 
 func LoadConfig() *Config {
@@ -24,11 +25,12 @@ func LoadConfig() *Config {
 	}
 
 	config := &Config{
-		Port:         getEnv("PORT", "8080"),
-		StorageFile:  getEnv("STORAGE_FILE", "storage.json"),
-		Environment:  getEnv("ENV", "development"),
-		LogLevel:     getEnv("LOG_LEVEL", "info"),
-		DATABASE_URL: getEnv("DATABASE_URL", "postgres://postgres:admin@localhost:5433/task_api"),
+		Port:         GetEnv("PORT", "8080"),
+		StorageFile:  GetEnv("STORAGE_FILE", "storage.json"),
+		Environment:  GetEnv("ENV", "development"),
+		LogLevel:     GetEnv("LOG_LEVEL", "info"),
+		DATABASE_URL: GetEnv("DATABASE_URL", "postgres://postgres:admin@localhost:5433/task_api"),
+		JWT_SECRET:   GetEnv("JWT_SECRET", "secret-key"),
 	}
 
 	if config.Port == "" {
@@ -38,7 +40,7 @@ func LoadConfig() *Config {
 	return config
 }
 
-func getEnv(key, defaultValue string) string {
+func GetEnv(key, defaultValue string) string {
 
 	if value := os.Getenv(key); value != "" {
 		return value

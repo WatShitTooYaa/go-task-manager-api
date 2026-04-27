@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/WatShitTooYaa/go-task-manager-api/internal/auth"
@@ -15,8 +14,9 @@ import (
 
 func CORSMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		// w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 		if r.Method == http.MethodOptions {
@@ -30,19 +30,26 @@ func CORSMiddleware(next http.Handler) http.Handler {
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
-		if authHeader == "" {
-			response.Unauthorized(w, "Missing authorization header")
+		// authHeader := r.Header.Get("Authorization")
+		// if authHeader == "" {
+		// 	response.Unauthorized(w, "Missing authorization header")
+		// 	return
+		// }
+
+		// tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+		// if tokenString == authHeader {
+		// 	response.Unauthorized(w, "Invalid authorization format")
+		// 	return
+		// }
+
+		c, err := r.Cookie("access_token")
+		if err != nil || c == nil {
+			response.Unauthorized(w, "Cookie not found")
 			return
 		}
 
-		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		if tokenString == authHeader {
-			response.Unauthorized(w, "Invalid authorization format")
-			return
-		}
-
-		claims, err := auth.ValidateToken(tokenString)
+		// claims, err := auth.ValidateToken(c.Value)
+		claims, err := auth.ValidateAccessToken(c.Value)
 		if err != nil {
 			response.Unauthorized(w, "Invalid token")
 			return
@@ -54,6 +61,33 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+
+// func AuthMiddleware(next http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		authHeader := r.Header.Get("Authorization")
+// 		if authHeader == "" {
+// 			response.Unauthorized(w, "Missing authorization header")
+// 			return
+// 		}
+
+// 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+// 		if tokenString == authHeader {
+// 			response.Unauthorized(w, "Invalid authorization format")
+// 			return
+// 		}
+
+// 		claims, err := auth.ValidateToken(tokenString)
+// 		if err != nil {
+// 			response.Unauthorized(w, "Invalid token")
+// 			return
+// 		}
+
+// 		ctx := context.WithValue(r.Context(), "user_id", claims.UserID)
+// 		ctx = context.WithValue(ctx, "username", claims.Username)
+
+// 		next.ServeHTTP(w, r.WithContext(ctx))
+// 	})
+// }
 
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

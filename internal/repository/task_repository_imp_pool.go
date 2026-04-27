@@ -74,7 +74,7 @@ func (pool *taskRepositoryImplPool) FindAll(ctx context.Context, userID uint16) 
 
 func (pool *taskRepositoryImplPool) FindById(ctx context.Context, id, userID uint16) (entity.Task, error) {
 	query := `
-	select id, content, completed, timestamp, priority 
+	select id, user_id, content, completed, timestamp, priority 
 	from tasks
 	where id = $1 and user_id = $2`
 	rows, err := pool.DBPool.Query(ctx, query, id, userID)
@@ -85,7 +85,7 @@ func (pool *taskRepositoryImplPool) FindById(ctx context.Context, id, userID uin
 	//ada
 	defer rows.Close()
 	if rows.Next() {
-		err := rows.Scan(&task.Id, &task.Content, &task.Completed, &task.Timestamp, &task.Priority)
+		err := rows.Scan(&task.Id, &task.UserID, &task.Content, &task.Completed, &task.Timestamp, &task.Priority)
 		if err != nil {
 			return task, err
 		}
